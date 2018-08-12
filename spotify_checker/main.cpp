@@ -75,7 +75,16 @@ auto main(void) -> int
 
 	if (user.length() > 1 && pw.length() > 4) // I'm unsure if these are the right values
 	{
-		printf("\n Output: %s ", getData(user, pw).c_str());
+		auto returnData = getData(user, pw);
+		if (returnData.find("errorInvalidCredentials") != std::string::npos)
+			printf("Invalid account credentials\n");
+		else
+		{
+			if (returnData.find("Spotify Free") != std::string::npos)
+				printf("Valid account! Subscription type: FREE\n");
+			else
+				printf("Valid account! Subscription type: PREMIUM\n");
+		}
 		system("pause");
 		return EXIT_SUCCESS;
 	}
