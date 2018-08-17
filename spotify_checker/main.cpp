@@ -86,10 +86,13 @@ auto main(void) -> int
 				printf("%s:%s - Invalid account credentials\n", user.c_str(), pw.c_str());
 			else
 			{
+				std::string type;
 				if (returnData.find("Spotify Free") != std::string::npos)
-					printf("%s:%s - Valid account! Subscription type: FREE\n", user.c_str(), pw.c_str());
+					type = "FREE";
 				else
-					printf("%s:%s - Valid account! Subscription type: PREMIUM\n", user.c_str(), pw.c_str());
+					type = "PREMIUM";
+
+				printf("%s:%s - Valid account! Subscription type: %s\n", user.c_str(), pw.c_str(), type.c_str());
 			}
 		}
 		else
