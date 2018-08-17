@@ -67,38 +67,37 @@ auto getData(std::string username, std::string password)
 
 auto main(void) -> int
 {
-	std::string user, pw;
 
 	SetConsoleTitle("Spotify Account Checker by janekaldo");
 
-	while (true) {
-		std::cout << "Enter a username: " << std::endl;
-		std::cin >> user;
-		std::cout << "Enter a password: " << std::endl;
-		std::cin >> pw;
+	std::string line;
+	std::ifstream file("accounts.txt");
+	std::string user, pw;
 
+	while (getline(file, line)) {
+		int pos = line.find_first_of(':');
+		user = line.substr(0, pos);
+		pw = line.substr(pos + 1);
 
 		if (user.length() > 1 && pw.length() > 4) // I'm unsure if these are the right values
 		{
 			auto returnData = getData(user, pw);
 			if (returnData.find("errorInvalidCredentials") != std::string::npos)
-				printf("Invalid account credentials\n");
+				printf("%s:%s - Invalid account credentials\n", user.c_str(), pw.c_str());
 			else
 			{
 				if (returnData.find("Spotify Free") != std::string::npos)
-					printf("Valid account! Subscription type: FREE\n");
+					printf("%s:%s - Valid account! Subscription type: FREE\n", user.c_str(), pw.c_str());
 				else
-					printf("Valid account! Subscription type: PREMIUM\n");
+					printf("%s:%s - Valid account! Subscription type: PREMIUM\n", user.c_str(), pw.c_str());
 			}
-			printf("Press any key to check another account.\n");
-			getchar();
 		}
 		else
 		{
 			printf("\n Invalid entries \n");
 			printf("Press any key to check another account.\n");
-			getchar();
 		}
 	}
+	system("pause");
 	return 1;
 }
