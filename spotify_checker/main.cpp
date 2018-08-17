@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <fstream>
 
 #define CURL_STATICLIB
 
@@ -68,30 +69,34 @@ auto main(void) -> int
 {
 	std::string user, pw;
 
-	std::cout << "Enter a username: " << std::endl;
-	std::cin >> user;
-	std::cout << "Enter a password: " << std::endl;
-	std::cin >> pw;
+	printf("by janekaldo\n");
+	while (true) {
+		std::cout << "Enter a username: " << std::endl;
+		std::cin >> user;
+		std::cout << "Enter a password: " << std::endl;
+		std::cin >> pw;
 
-	if (user.length() > 1 && pw.length() > 4) // I'm unsure if these are the right values
-	{
-		auto returnData = getData(user, pw);
-		if (returnData.find("errorInvalidCredentials") != std::string::npos)
-			printf("Invalid account credentials\n");
+
+		if (user.length() > 1 && pw.length() > 4) // I'm unsure if these are the right values
+		{
+			auto returnData = getData(user, pw);
+			if (returnData.find("errorInvalidCredentials") != std::string::npos)
+				printf("Invalid account credentials\n");
+			else
+			{
+				if (returnData.find("Spotify Free") != std::string::npos)
+					printf("Valid account! Subscription type: FREE\n");
+				else
+					printf("Valid account! Subscription type: PREMIUM\n");
+			}
+			printf("Press any key to check another account.\n");
+			getchar();
+		}
 		else
 		{
-			if (returnData.find("Spotify Free") != std::string::npos)
-				printf("Valid account! Subscription type: FREE\n");
-			else
-				printf("Valid account! Subscription type: PREMIUM\n");
+			printf("\n Invalid entries \n");
+			printf("Press any key to check another account.\n");
+			getchar();
 		}
-		system("pause");
-		return EXIT_SUCCESS;
-	}
-	else
-	{
-		printf("\n Invalid entries \n");
-		system("pause");
-		return EXIT_FAILURE;
 	}
 }
