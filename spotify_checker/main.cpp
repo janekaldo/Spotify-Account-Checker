@@ -37,12 +37,12 @@ WriteMemoryCallback(void *contents, size_t size, size_t nmemb, void *userp)
 
 struct MemoryStruct chunk;
 
-std::string getData(std::string username, std::string password)
+auto getData(std::string username, std::string password)
 {
 	curl_global_init(CURL_GLOBAL_DEFAULT);
 	CURL *curl = curl_easy_init();
 	CURLcode res;
-	std::string to_return = "error";
+	std::string to_return;
 
 	chunk.memory = static_cast<char*>(malloc(1));
 	chunk.size = 0;
@@ -52,7 +52,7 @@ std::string getData(std::string username, std::string password)
 	{
 		curl_easy_setopt(curl, CURLOPT_URL, "http://sayank-km.xyz/api/?" + postData); // https://github.com/thaniaanatasya/spotify
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
-		curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void*)&chunk);
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, static_cast<void*>(&chunk));
 		res = curl_easy_perform(curl);
 		if (res != CURLE_OK)
 			fprintf(stderr,	"curl_easy_perform() failed: %s\n",
@@ -69,7 +69,8 @@ auto main(void) -> int
 {
 	std::string user, pw;
 
-	printf("by janekaldo\n");
+	SetConsoleTitle("Spotify Account Checker by janekaldo");
+
 	while (true) {
 		std::cout << "Enter a username: " << std::endl;
 		std::cin >> user;
@@ -99,4 +100,5 @@ auto main(void) -> int
 			getchar();
 		}
 	}
+	return 1;
 }
